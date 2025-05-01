@@ -425,3 +425,15 @@ describe("ProductService", () => {
 ### TypeScript のパスエイリアス
 
 - `@/*` のパスエイリアスは `tsconfig.json` の `"paths"` だけでなく、Jest の `moduleNameMapper` でも同様に設定してください
+
+## プロジェクト作成したときに最初にやること
+
+### vercel のプロジェクト紐付け
+
+- vercel link --project myapp-template2
+
+### .env.common でプロジェクト名を修正
+
+### github の環境変数の"Preview"環境を作成
+
+### github で settings の Workflow permissions を"Read and write permissions"に設定する
