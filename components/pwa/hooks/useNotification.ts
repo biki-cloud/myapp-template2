@@ -11,6 +11,22 @@ import {
 
 let notificationService: any = null;
 
+const initializeNotificationService = async () => {
+  if (typeof window === "undefined" || notificationService)
+    return notificationService;
+
+  try {
+    const { getNotificationService } = await import(
+      "@/lib/di/client-side-container"
+    );
+    notificationService = getNotificationService();
+  } catch (error) {
+    console.error("通知サービスの初期化に失敗しました:", error);
+  }
+
+  return notificationService;
+};
+
 export function useNotification() {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [subscription, setSubscription] = useState<PushSubscription | null>(
@@ -20,34 +36,19 @@ export function useNotification() {
   const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
-    async function initializeService() {
-      if (typeof window === "undefined") return;
-
-      try {
-        const { getNotificationService } = await import(
-          "@/lib/di/client-side-container"
-        );
-        notificationService = getNotificationService();
-        setIsLoading(false);
-      } catch (error) {
-        console.error("通知サービスの初期化に失敗しました:", error);
-        setIsLoading(false);
-      }
-    }
-
-    void initializeService();
-  }, []);
-
-  useEffect(() => {
-    if (!notificationService) return;
-
     let isMounted = true;
 
-    const initializeNotificationState = async () => {
+    const initialize = async () => {
       if (!isMounted) return;
 
+      const service = await initializeNotificationService();
+      if (!service) {
+        setIsLoading(false);
+        return;
+      }
+
       try {
-        if (!(await notificationService.checkSupport())) {
+        if (!(await service.checkSupport())) {
           setIsLoading(false);
           return;
         }
@@ -74,7 +75,7 @@ export function useNotification() {
       }
     };
 
-    void initializeNotificationState();
+    void initialize();
 
     return () => {
       isMounted = false;

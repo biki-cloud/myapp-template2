@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,7 +13,7 @@ import { Bell, BellOff, Send } from "lucide-react";
 import { useNotification } from "@/components/pwa/hooks/useNotification";
 import type { NotificationPayload } from "@/lib/core/domain/notification.domain";
 
-export function NotificationSettingsPanelContent() {
+function NotificationSettingsPanel() {
   const {
     isSubscribed,
     isLoading,
@@ -73,5 +74,13 @@ export function NotificationSettingsPanelContent() {
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+export function NotificationSettingsPanelContent() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <NotificationSettingsPanel />
+    </Suspense>
   );
 }
