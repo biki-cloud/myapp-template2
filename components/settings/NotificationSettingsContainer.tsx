@@ -1,3 +1,5 @@
+"use client";
+
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
 import {
@@ -29,19 +31,22 @@ function LoadingCard() {
   );
 }
 
-// 動的にインポートする通知設定パネルのコンテンツ
+// 動的にインポートする通知設定パネル
 const NotificationSettingsPanel = dynamic(
-  () =>
-    import("./NotificationSettingsPanel").then(
-      (mod) => mod.NotificationSettingsPanel
-    ),
+  () => import("./NotificationSettingsPanel"),
   {
     loading: () => <LoadingCard />,
-    ssr: false,
+    ssr: false, // サーバーサイドレンダリングを無効化
   }
 );
 
-export function NotificationSettingsContainer() {
+// クライアントサイド専用のコンテナコンポーネント
+export default function NotificationSettingsContainer() {
+  // クライアントサイドでのみレンダリング
+  if (typeof window === "undefined") {
+    return <LoadingCard />;
+  }
+
   return (
     <Suspense fallback={<LoadingCard />}>
       <NotificationSettingsPanel />

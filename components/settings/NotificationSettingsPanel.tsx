@@ -12,7 +12,7 @@ import { Bell, BellOff, Send } from "lucide-react";
 import { useNotification } from "@/components/pwa/hooks/useNotification";
 import type { NotificationPayload } from "@/lib/core/domain/notification.domain";
 
-export function NotificationSettingsPanel() {
+function NotificationSettingsPanel() {
   const {
     isSubscribed,
     isLoading,
@@ -97,3 +97,5 @@ export function NotificationSettingsPanel() {
     </Card>
   );
 }
+
+export default NotificationSettingsPanel;

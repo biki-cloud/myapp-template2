@@ -11,7 +11,18 @@ import { redirect } from "next/navigation";
 import { UserCircle } from "lucide-react";
 import { getServerSession } from "next-auth";
 import { logger } from "@/lib/logger";
-import { NotificationSettingsContainer } from "@/components/settings/NotificationSettingsContainer";
+import dynamic from "next/dynamic";
+
+// 通知設定コンポーネントを動的にインポート
+const NotificationSettingsContainer = dynamic(
+  () => import("@/components/settings/NotificationSettingsContainer"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-52 rounded-lg" />
+    ),
+  }
+);
 
 export const metadata: Metadata = {
   title: "設定",
