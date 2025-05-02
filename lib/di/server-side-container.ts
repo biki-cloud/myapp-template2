@@ -9,9 +9,9 @@ import { UserRepository } from "../core/repositories/impl/user.repository.impl";
 import { IUserService } from "../core/services/interface/user.service.interface";
 import { IUserRepository } from "../core/repositories/interface/user.repository.interface";
 import type { INotificationRepository } from "@/lib/core/repositories/interface/notification.repository.interface";
-import { NotificationRepository } from "@/lib/core/repositories/impl/notification.repository";
+import { ServerNotificationRepository } from "@/lib/core/repositories/impl/server-notification.repository.impl";
 import type { INotificationService } from "@/lib/core/services/interface/notification.service.interface";
-import { NotificationService } from "@/lib/core/services/impl/notification.service.impl";
+import { ServerNotificationService } from "@/lib/core/services/impl/server-notification.service.impl";
 
 let isInitialized = false;
 
@@ -34,11 +34,11 @@ export function initializeContainer() {
 
   container.registerSingleton<INotificationRepository>(
     "NotificationRepository",
-    NotificationRepository
+    ServerNotificationRepository
   );
   container.registerSingleton<INotificationService>(
     "NotificationService",
-    NotificationService
+    ServerNotificationService
   );
 
   isInitialized = true;

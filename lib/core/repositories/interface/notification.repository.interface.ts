@@ -1,7 +1,18 @@
+import type {
+  NotificationPayload,
+  NotificationSubscription,
+} from "../../domain/notification.domain";
+
 export interface INotificationRepository {
-  testNotification(title: string, options?: NotificationOptions): Promise<void>;
-  requestPermission(): Promise<NotificationPermission>;
-  getPermission(): NotificationPermission;
-  registerServiceWorker(): Promise<ServiceWorkerRegistration | undefined>;
-  isSupported(): boolean;
+  checkSupport(): Promise<boolean>;
+  requestPermission(): Promise<boolean>;
+  subscribe(): Promise<PushSubscription | null>;
+  unsubscribe(subscription: PushSubscription): Promise<boolean>;
+  sendNotification(
+    subscription: PushSubscription,
+    payload: NotificationPayload
+  ): Promise<boolean>;
+  saveSubscription(subscription: PushSubscription): void;
+  clearSubscription(): void;
+  getStoredSubscription(): Promise<PushSubscription | null>;
 }

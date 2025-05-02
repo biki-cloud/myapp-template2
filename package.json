@@ -6,6 +6,7 @@
     "dev": "dotenv -e env/.env.local next dev",
     "dev:clean": "rm -rf .next && pnpm dev",
     "build": "next build",
+    "build:local": "dotenv -e env/.env.local next build",
     "start": "next start",
     "local:setup": "npx tsx lib/local-setup/setup.ts",
     "db:seed:local": "npx tsx lib/infrastructure/db/seed.ts",

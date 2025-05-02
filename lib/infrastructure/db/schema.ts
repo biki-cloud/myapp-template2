@@ -4,6 +4,8 @@ import {
   varchar,
   boolean,
   timestamp,
+  integer,
+  text,
 } from "drizzle-orm/pg-core";
 
 import { getSchema } from "./env";
@@ -19,4 +21,18 @@ export const user = schema.table("users", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+export const pushSubscriptions = schema.table("push_subscriptions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => user.id),
+  endpoint: text("endpoint").notNull(),
+  p256dh: text("p256dh").notNull(),
+  auth: text("auth").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 export type UserRow = typeof user.$inferSelect;
+export type PushSubscription = typeof pushSubscriptions.$inferSelect;
+export type NewPushSubscription = typeof pushSubscriptions.$inferInsert;

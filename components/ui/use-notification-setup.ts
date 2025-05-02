@@ -14,7 +14,15 @@ export function useNotificationSetup(): UseNotificationSetupResult {
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [isGranted, setIsGranted] = useState(false);
-  const isSupported = notificationService.isSupported();
+  const [isSupported, setIsSupported] = useState(false);
+
+  useEffect(() => {
+    const checkSupport = async () => {
+      const supported = await notificationService.checkSupport();
+      setIsSupported(supported);
+    };
+    checkSupport();
+  }, [notificationService]);
 
   useEffect(() => {
     if (!isSupported) return;

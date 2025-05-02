@@ -3,9 +3,9 @@
 import "reflect-metadata";
 import { container } from "tsyringe";
 import type { INotificationService } from "@/lib/core/services/interface/notification.service.interface";
-import { NotificationService } from "@/lib/core/services/impl/notification.service.impl";
+import { ClientNotificationService } from "@/lib/core/services/impl/client-notification.service.impl";
 import type { INotificationRepository } from "@/lib/core/repositories/interface/notification.repository.interface";
-import { NotificationRepository } from "@/lib/core/repositories/impl/notification.repository";
+import { ClientNotificationRepository } from "@/lib/core/repositories/impl/client-notification.repository.impl";
 import type { IAuthClientService } from "@/lib/core/services/interface/auth.client.service.interface";
 import { AuthClientService } from "@/lib/core/services/impl/auth.client.service.impl";
 
@@ -17,12 +17,12 @@ export function initializeContainer() {
   // Register Database
   container.registerSingleton<INotificationRepository>(
     "NotificationRepository",
-    NotificationRepository
+    ClientNotificationRepository
   );
 
   container.registerSingleton<INotificationService>(
     "NotificationService",
-    NotificationService
+    ClientNotificationService
   );
 
   container.registerSingleton<IAuthClientService>(
