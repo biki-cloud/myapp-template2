@@ -1,3 +1,5 @@
+import { headers } from "next/headers";
+
 /**
  * 現在の環境に応じたベースURLを取得します
  * - 本番環境: https://your-project.vercel.app
@@ -5,18 +7,28 @@
  * - 開発環境: http://localhost:3000
  */
 export function getBaseUrl(): string {
-  // クライアントサイドの場合
-  if (typeof window !== "undefined") {
-    return window.location.origin;
-  }
+  try {
+    // サーバーサイドでの実行時
+    const headersList = headers();
+    const baseUrl = headersList.get("x-base-url");
+    if (baseUrl) return baseUrl;
 
-  // Vercel本番/プレビュー環境の場合
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
-  }
+    // クライアントサイドでの実行時
+    if (typeof window !== "undefined") {
+      return window.location.origin;
+    }
 
-  // 開発環境の場合
-  return process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    // フォールバック（開発環境）
+    if (process.env.NODE_ENV === "development") {
+      return "http://localhost:3000";
+    }
+
+    // フォールバック（本番環境）
+    return process.env.NEXT_PUBLIC_APP_URL || "";
+  } catch {
+    // ヘッダーが利用できない場合のフォールバック
+    return process.env.NEXT_PUBLIC_APP_URL || "";
+  }
 }
 
 /**
@@ -26,6 +38,8 @@ export function getBaseUrl(): string {
  */
 export function createAbsoluteUrl(path: string): string {
   const baseUrl = getBaseUrl();
+  if (!baseUrl) return path; // ベースURLが取得できない場合は相対パスをそのまま返す
+
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
   return `${baseUrl}${normalizedPath}`;
 }
@@ -36,6 +50,8 @@ export function createAbsoluteUrl(path: string): string {
  * @returns 有効な場合はtrue、無効な場合はfalse
  */
 export function isValidUrl(url: string): boolean {
+  if (!url) return false;
+
   try {
     new URL(url);
     return true;
