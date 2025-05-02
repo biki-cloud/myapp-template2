@@ -12,8 +12,8 @@ import {
 let notificationService: any = null;
 
 const initializeNotificationService = async () => {
-  if (typeof window === "undefined" || notificationService)
-    return notificationService;
+  if (typeof window === "undefined") return null;
+  if (notificationService) return notificationService;
 
   try {
     const { getNotificationService } = await import(
@@ -36,6 +36,11 @@ export function useNotification() {
   const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
+    if (typeof window === "undefined") {
+      setIsLoading(false);
+      return;
+    }
+
     let isMounted = true;
 
     const initialize = async () => {
@@ -71,7 +76,9 @@ export function useNotification() {
       } catch (error) {
         console.error("通知の初期化中にエラーが発生しました:", error);
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
@@ -83,23 +90,25 @@ export function useNotification() {
   }, []);
 
   const handleSubscribe = async () => {
-    if (!notificationService) return;
+    if (typeof window === "undefined") return;
+    const service = await initializeNotificationService();
+    if (!service) return;
 
     try {
       setIsLoading(true);
 
-      if (!(await notificationService.checkSupport())) {
+      if (!(await service.checkSupport())) {
         toast.error("このブラウザはプッシュ通知に対応していません");
         return;
       }
 
-      const isPermissionGranted = await notificationService.requestPermission();
+      const isPermissionGranted = await service.requestPermission();
       if (!isPermissionGranted) {
         toast.error("通知の許可が必要です");
         return;
       }
 
-      const newSubscription = await notificationService.subscribe();
+      const newSubscription = await service.subscribe();
       if (newSubscription) {
         const { success, error } = await savePushSubscription({
           endpoint: newSubscription.endpoint,
@@ -138,11 +147,13 @@ export function useNotification() {
   };
 
   const handleUnsubscribe = async () => {
-    if (!notificationService || !subscription) return;
+    if (typeof window === "undefined" || !subscription) return;
+    const service = await initializeNotificationService();
+    if (!service) return;
 
     try {
       setIsLoading(true);
-      const success = await notificationService.unsubscribe(subscription);
+      const success = await service.unsubscribe(subscription);
       if (success) {
         const { success: deleteSuccess, error } =
           await deletePushSubscription();
@@ -167,17 +178,20 @@ export function useNotification() {
   };
 
   const handleSendNotification = async (payload: NotificationPayload) => {
-    if (!notificationService || !subscription) {
+    if (typeof window === "undefined" || !subscription) {
       toast.error("通知の設定が必要です");
       return;
     }
 
+    const service = await initializeNotificationService();
+    if (!service) return;
+
     try {
       setIsSending(true);
-      const success = await notificationService.sendNotification(
-        subscription,
-        payload
-      );
+      const success = await service.sendNotification(subscription, {
+        ...payload,
+        url: new URL(payload.url, window.location.origin).toString(),
+      });
       if (success) {
         toast.success("通知を送信しました", {
           description: "まもなく通知が届きます",

@@ -24,13 +24,19 @@ function NotificationSettingsPanel() {
   } = useNotification();
 
   const handleTestNotification = () => {
+    if (!handleSendNotification) return;
+
     const testPayload: NotificationPayload = {
       title: "テスト通知",
       body: "プッシュ通知のテストです",
-      url: "/",
+      url: window.location.origin,
     };
     handleSendNotification(testPayload);
   };
+
+  if (typeof window === "undefined") {
+    return null;
+  }
 
   return (
     <Card className="border-orange-100 dark:border-orange-500/20 shadow-lg shadow-orange-100/50 dark:shadow-none backdrop-blur-sm bg-white/80 dark:bg-gray-900/80">
