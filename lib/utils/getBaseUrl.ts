@@ -16,5 +16,30 @@ export function getBaseUrl(): string {
   }
 
   // 開発環境の場合
-  return "http://localhost:3000";
+  return process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+}
+
+/**
+ * 相対パスを絶対URLに変換します
+ * @param path - 相対パス（例: "/api/auth"）
+ * @returns 絶対URL
+ */
+export function createAbsoluteUrl(path: string): string {
+  const baseUrl = getBaseUrl();
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  return `${baseUrl}${normalizedPath}`;
+}
+
+/**
+ * URLが有効かどうかを確認します
+ * @param url - 確認するURL
+ * @returns 有効な場合はtrue、無効な場合はfalse
+ */
+export function isValidUrl(url: string): boolean {
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
 }
