@@ -3,7 +3,7 @@ import "reflect-metadata";
 import { inject, injectable } from "tsyringe";
 import type { Database } from "@/lib/infrastructure/db/drizzle";
 import { user } from "@/lib/infrastructure/db/schema";
-import type { UserRow as DbUser } from "@/lib/infrastructure/db/schema";
+import type { User as DbUser } from "@/lib/infrastructure/db/schema";
 import type {
   User,
   CreateUserInput,

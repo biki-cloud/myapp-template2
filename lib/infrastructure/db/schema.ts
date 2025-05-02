@@ -33,6 +33,6 @@ export const pushSubscriptions = schema.table("push_subscriptions", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export type UserRow = typeof user.$inferSelect;
+export type User = typeof user.$inferSelect;
 export type PushSubscription = typeof pushSubscriptions.$inferSelect;
 export type NewPushSubscription = typeof pushSubscriptions.$inferInsert;
