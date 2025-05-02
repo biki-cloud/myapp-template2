@@ -37,11 +37,6 @@ export function useNotification() {
   const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
-    if (typeof window === "undefined") {
-      setIsLoading(false);
-      return;
-    }
-
     let isMounted = true;
 
     const initialize = async () => {
@@ -91,7 +86,6 @@ export function useNotification() {
   }, []);
 
   const handleSubscribe = async () => {
-    if (typeof window === "undefined") return;
     const service = await initializeNotificationService();
     if (!service) return;
 
@@ -148,7 +142,7 @@ export function useNotification() {
   };
 
   const handleUnsubscribe = async () => {
-    if (typeof window === "undefined" || !subscription) return;
+    if (!subscription) return;
     const service = await initializeNotificationService();
     if (!service) return;
 
@@ -179,7 +173,7 @@ export function useNotification() {
   };
 
   const handleSendNotification = async (payload: NotificationPayload) => {
-    if (typeof window === "undefined" || !subscription) {
+    if (!subscription) {
       toast.error("通知の設定が必要です");
       return;
     }
