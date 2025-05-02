@@ -11,7 +11,6 @@ import {
 import { Bell, BellOff, Send } from "lucide-react";
 import { useNotification } from "@/components/pwa/hooks/useNotification";
 import type { NotificationPayload } from "@/lib/core/domain/notification.domain";
-import { getBaseUrl } from "@/lib/utils/getBaseUrl";
 
 export function NotificationSettingsPanel() {
   const {
@@ -29,7 +28,7 @@ export function NotificationSettingsPanel() {
     const testPayload: NotificationPayload = {
       title: "テスト通知",
       body: "プッシュ通知のテストです",
-      url: getBaseUrl(),
+      url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
     };
     handleSendNotification(testPayload);
   };

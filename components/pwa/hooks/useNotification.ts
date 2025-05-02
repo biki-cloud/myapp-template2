@@ -8,7 +8,6 @@ import {
   deletePushSubscription,
   getPushSubscription,
 } from "@/app/actions/push-subscription";
-import { createAbsoluteUrl, isValidUrl } from "@/lib/utils/getBaseUrl";
 
 let notificationService: any = null;
 
@@ -183,14 +182,7 @@ export function useNotification() {
 
     try {
       setIsSending(true);
-      const url = isValidUrl(payload.url)
-        ? payload.url
-        : createAbsoluteUrl(payload.url);
-
-      const success = await service.sendNotification(subscription, {
-        ...payload,
-        url,
-      });
+      const success = await service.sendNotification(subscription, payload);
 
       if (success) {
         toast.success("通知を送信しました", {
