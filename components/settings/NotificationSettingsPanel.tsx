@@ -45,6 +45,10 @@ const NotificationSettingsPanelContent = dynamic(
 
 // メインコンポーネント
 export function NotificationSettingsPanel() {
+  if (typeof window === "undefined") {
+    return <LoadingCard />;
+  }
+
   return (
     <Suspense fallback={<LoadingCard />}>
       <NotificationSettingsPanelContent />
