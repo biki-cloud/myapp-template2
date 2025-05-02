@@ -1,6 +1,5 @@
 "use client";
 
-import "reflect-metadata";
 import { Button } from "@/components/ui/button";
 import {
   Card,

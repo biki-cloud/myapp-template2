@@ -1,20 +1,17 @@
 "use client";
 
-import "reflect-metadata";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import type { INotificationService } from "@/lib/core/services/interface/notification.service.interface";
 import type { NotificationPayload } from "@/lib/core/domain/notification.domain";
-import { getNotificationService } from "@/lib/di/client-side-container";
 import {
   savePushSubscription,
   deletePushSubscription,
   getPushSubscription,
 } from "@/app/actions/push-subscription";
 
+let notificationService: any = null;
+
 export function useNotification() {
-  const [notificationService, setNotificationService] =
-    useState<INotificationService | null>(null);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [subscription, setSubscription] = useState<PushSubscription | null>(
     null
@@ -22,20 +19,25 @@ export function useNotification() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
 
-  // コンテナの初期化とサービスの解決
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    async function initializeService() {
+      if (typeof window === "undefined") return;
 
-    try {
-      const service = getNotificationService();
-      setNotificationService(service);
-    } catch (error) {
-      console.error("通知サービスの初期化に失敗しました:", error);
-      setIsLoading(false);
+      try {
+        const { getNotificationService } = await import(
+          "@/lib/di/client-side-container"
+        );
+        notificationService = getNotificationService();
+        setIsLoading(false);
+      } catch (error) {
+        console.error("通知サービスの初期化に失敗しました:", error);
+        setIsLoading(false);
+      }
     }
+
+    void initializeService();
   }, []);
 
-  // 通知の初期状態の設定
   useEffect(() => {
     if (!notificationService) return;
 
@@ -50,7 +52,6 @@ export function useNotification() {
           return;
         }
 
-        // サーバーから購読情報を取得
         const { success, subscription: serverSubscription } =
           await getPushSubscription();
         if (success && serverSubscription) {
@@ -78,7 +79,7 @@ export function useNotification() {
     return () => {
       isMounted = false;
     };
-  }, [notificationService]);
+  }, []);
 
   const handleSubscribe = async () => {
     if (!notificationService) return;
@@ -99,7 +100,6 @@ export function useNotification() {
 
       const newSubscription = await notificationService.subscribe();
       if (newSubscription) {
-        // サーバーに購読情報を保存
         const { success, error } = await savePushSubscription({
           endpoint: newSubscription.endpoint,
           keys: {
@@ -143,7 +143,6 @@ export function useNotification() {
       setIsLoading(true);
       const success = await notificationService.unsubscribe(subscription);
       if (success) {
-        // サーバーから購読情報を削除
         const { success: deleteSuccess, error } =
           await deletePushSubscription();
         if (deleteSuccess) {
