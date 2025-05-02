@@ -4,6 +4,10 @@ const nextConfig = {
   compiler: {
     removeConsole: false,
   },
+  experimental: {
+    serverActions: true,
+  },
+  output: "standalone",
 };
 
 module.exports = nextConfig;

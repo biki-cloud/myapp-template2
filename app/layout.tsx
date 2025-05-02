@@ -15,10 +15,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <NextAuthProvider>
-        <Navbar />
-        <body>{children}</body>
-      </NextAuthProvider>
+      <body>
+        <NextAuthProvider>
+          <Navbar />
+          {children}
+        </NextAuthProvider>
+      </body>
     </html>
   );
 }
